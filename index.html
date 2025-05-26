@@ -1,422 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en" data-theme="default">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Daily Journal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom styles for the Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: rgb(32, 31, 32);
-        }
-        /* Hide details by default */
-        .note-details {
-            display: none;
-        }
-        /* Style for the active (shown) details */
-        .note-details.active {
-            display: block;
-        }
-        /* Basic scrollbar styling for the notes container */
-        .notes-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .notes-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .notes-container::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        .notes-container::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
-</head>
-<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 hover:scale-[1.01]">
-        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8">
-            My Daily Journal 📝
-        </h1>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="app-body">
+    <div class="journal-container">
+      <h1 class="main-title">My Daily Journal 📝</h1>
 
-        <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <strong class="font-bold">Error!</strong>
-            <span class="block sm:inline" id="errorText"></span>
+      <div id="errorMessage" class="error-message hidden" role="alert">
+        <strong class="error-message-bold">Error!</strong>
+        <span class="error-message-text" id="errorText"></span>
+      </div>
+
+      <div id="authSection" class="auth-section">
+        <h2 class="auth-title">Login / Sign Up</h2>
+        <div class="form-group">
+          <label for="authEmail" class="form-label">Email:</label>
+          <input
+            type="email"
+            id="authEmail"
+            placeholder="your@email.com"
+            class="form-input"
+          />
+        </div>
+        <div class="form-group">
+          <label for="authPassword" class="form-label">Password:</label>
+          <input
+            type="password"
+            id="authPassword"
+            placeholder="********"
+            class="form-input"
+          />
+        </div>
+        <div class="auth-buttons-container">
+          <button id="loginBtn" class="btn btn-primary">Login</button>
+          <button id="signupBtn" class="btn btn-secondary">Sign Up</button>
+        </div>
+      </div>
+
+      <div id="journalSection" class="journal-section hidden">
+        <div class="user-info-bar">
+          <div class="theme-switcher-container">
+            <label for="themeSwitcher" class="form-label">Theme:</label>
+            <select id="themeSwitcher" class="form-input">
+              <option value="default">Default</option>
+              <option value="dark">Dark</option>
+              <option value="forest">Forest</option>
+              <option value="beach">Beach</option>
+              <option value="bw">Black & White</option>
+              <option value="matrix">Matrix</option>
+              <option value="usa">USA</option>
+              <option value="modern">Modern</option>
+              <option value="safe">Blue Light Safe</option>
+            </select>
+          </div>
+          <p class="user-email-text">
+            Logged in as: <span id="userEmail" class="user-email-value"></span>
+          </p>
+          <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
 
-        <div id="authSection" class="p-6 bg-indigo-50 rounded-lg shadow-inner mb-8">
-            <h2 class="text-2xl font-bold text-indigo-700 mb-4 text-center">Login / Sign Up</h2>
-            <div class="mb-4">
-                <label for="authEmail" class="block text-gray-700 text-sm font-semibold mb-2">Email:</label>
-                <input type="email" id="authEmail" placeholder="your@email.com"
-                       class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition duration-200">
-            </div>
-            <div class="mb-4">
-                <label for="authPassword" class="block text-gray-700 text-sm font-semibold mb-2">Password:</label>
-                <input type="password" id="authPassword" placeholder="********"
-                       class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition duration-200">
-            </div>
-            <div class="flex justify-between space-x-2">
-                <button id="loginBtn"
-                        class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                    Login
-                </button>
-                <button id="signupBtn"
-                        class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                    Sign Up
-                </button>
-            </div>
+        <div class="add-entry-trigger">
+          <button id="openAddEntryBtn" class="btn btn-primary">
+            Add New Entry
+          </button>
         </div>
 
-        <div id="journalSection" class="hidden">
-            <div class="flex justify-between items-center mb-4 bg-gray-100 p-4 rounded-lg shadow-sm">
-                <p class="text-gray-700 text-sm">Logged in as: <span id="userEmail" class="font-bold text-indigo-700"></span></p>
-                <button id="logoutBtn"
-                        class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-400 transition duration-300">
-                    Logout
-                </button>
-            </div>
-
-            <div class="mb-8 p-6 bg-blue-50 rounded-lg shadow-inner">
-                <h2 class="text-2xl font-bold text-blue-700 mb-4">Add New Entry</h2>
-                <div class="mb-4">
-                    <label for="noteTitle" class="block text-gray-700 text-sm font-semibold mb-2">Title:</label>
-                    <input type="text" id="noteTitle" placeholder="e.g., Finished project report"
-                           class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200">
-                </div>
-                <div class="mb-4">
-                    <label for="noteDetails" class="block text-gray-700 text-sm font-semibold mb-2">Details:</label>
-                    <textarea id="noteDetails" rows="4" placeholder="e.g., Researched data, drafted executive summary, sent for review."
-                              class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"></textarea>
-                </div>
-                <button id="addNoteBtn"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                    Add Note
-                </button>
-            </div>
-
-            <div class="mb-8 p-6 bg-green-50 rounded-lg shadow-inner">
-                <h2 class="text-2xl font-bold text-green-700 mb-4">Search Notes</h2>
-                <div class="mb-4">
-                    <label for="searchDate" class="block text-gray-700 text-sm font-semibold mb-2">Search by Date (YYYY-MM-DD):</label>
-                    <input type="date" id="searchDate"
-                           class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition duration-200">
-                </div>
-                <button id="clearSearchBtn"
-                        class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                    Clear Search
-                </button>
-            </div>
-
-            <div class="p-6 bg-purple-50 rounded-lg shadow-inner">
-                <h2 class="text-2xl font-bold text-purple-700 mb-4">Your Entries</h2>
-                <div id="notesContainer" class="space-y-4 max-h-96 overflow-y-auto notes-container">
-                    <p id="noNotesMessage" class="text-gray-500 text-center italic hidden">No notes yet. Add your first entry!</p>
-                    <p id="noSearchResultsMessage" class="text-gray-500 text-center italic hidden">No notes found for this date.</p>
-                </div>
-            </div>
+        <div class="search-section">
+          <h2 class="section-title">Search Notes</h2>
+          <div class="form-group">
+            <label for="searchDate" class="form-label"
+              >Search by Date (YYYY-MM-DD):</label
+            >
+            <input type="date" id="searchDate" class="form-date-input" />
+          </div>
+          <button id="clearSearchBtn" class="btn btn-clear-search">
+            Clear Search
+          </button>
         </div>
+
+        <div class="entries-section">
+          <h2 class="section-title">Your Entries</h2>
+          <div id="notesContainer" class="notes-list-container">
+            <p id="noNotesMessage" class="info-message hidden">
+              No notes yet. Add your first entry!
+            </p>
+            <p id="noSearchResultsMessage" class="info-message hidden">
+              No notes found for this date.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div id="detailsPanel" class="details-panel">
+      <div class="details-panel-content">
+        <h2 class="section-title">Add New Entry</h2>
+        <div class="form-group">
+          <label for="noteTitle" class="form-label">Title:</label>
+          <input
+            type="text"
+            id="noteTitle"
+            placeholder="e.g., Finished project report"
+            class="form-input"
+          />
+        </div>
+        <div class="form-group">
+          <label for="noteDetails" class="form-label">Details:</label>
+          <textarea
+            id="noteDetails"
+            rows="4"
+            placeholder="e.g., Researched data, drafted executive summary, sent for review."
+            class="form-textarea"
+          ></textarea>
+        </div>
+      </div>
+      <div class="details-panel-actions">
+        <button id="addNoteBtn" class="btn btn-add-note">Add Entry</button>
+        <button id="cancelNoteBtn" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay hidden"></div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
-    <script>
-        // Your Firebase configuration
-        // This is the correct way to declare your Firebase config for client-side HTML
-        const firebaseConfig = {
-            apiKey: "AIzaSyCBDfcp3OJ5JJVDl0I73mfJJCwDzrKQfBc",
-            authDomain: "keyns-dj-app.firebaseapp.com",
-            projectId: "keyns-dj-app",
-            storageBucket: "keyns-dj-app.firebasestorage.app",
-            messagingSenderId: "157975423461",
-            appId: "1:157975423461:web:dd31f5c6260ced76a0a70c",
-            measurementId: "G-PZHCYCNHND"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        // Get Firebase services
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- DOM Elements ---
-        const authEmailInput = document.getElementById('authEmail');
-        const authPasswordInput = document.getElementById('authPassword');
-        const loginBtn = document.getElementById('loginBtn');
-        const signupBtn = document.getElementById('signupBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const userEmailSpan = document.getElementById('userEmail');
-        const authSection = document.getElementById('authSection');
-        const journalSection = document.getElementById('journalSection');
-        const errorMessageDiv = document.getElementById('errorMessage');
-        const errorTextSpan = document.getElementById('errorText');
-
-        const noteTitleInput = document.getElementById('noteTitle');
-        const noteDetailsTextarea = document.getElementById('noteDetails');
-        const addNoteBtn = document.getElementById('addNoteBtn');
-        const searchDateInput = document.getElementById('searchDate');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-        const notesContainer = document.getElementById('notesContainer');
-        const noNotesMessage = document.getElementById('noNotesMessage');
-        const noSearchResultsMessage = document.getElementById('noSearchResultsMessage');
-
-        let currentUser = null; // To store the current authenticated user
-
-        // --- Utility Functions ---
-        function displayError(message) {
-            errorTextSpan.textContent = message;
-            errorMessageDiv.classList.remove('hidden');
-        }
-
-        function clearError() {
-            errorMessageDiv.classList.add('hidden');
-            errorTextSpan.textContent = '';
-        }
-
-        /**
-         * Renders the notes in the display container, optionally filtering by date.
-         * Fetches notes from Firestore for the current user.
-         * @param {string|null} filterDate - The date string (YYYY-MM-DD) to filter notes, or null for all notes.
-         */
-        async function renderNotes(filterDate = null) {
-            if (!currentUser) return; // Only render if user is logged in
-
-            notesContainer.innerHTML = ''; // Clear existing notes
-            noNotesMessage.classList.add('hidden');
-            noSearchResultsMessage.classList.add('hidden');
-            clearError();
-
-            try {
-                let notesRef = db.collection('journals').doc(currentUser.uid).collection('notes');
-                let query = notesRef.orderBy('timestamp', 'desc'); // Order by most recent
-
-                if (filterDate) {
-                    // Firestore range queries for date filtering
-                    // To filter for a specific day, we need to query from the start of the day to the end of the day.
-                    const startDate = new Date(`${filterDate}T00:00:00`); // Start of the day
-                    const endDate = new Date(`${filterDate}T23:59:59`);   // End of the day
-                    query = query.where('timestamp', '>=', startDate).where('timestamp', '<=', endDate);
-                }
-
-                const snapshot = await query.get();
-                const notes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                if (notes.length === 0) {
-                    if (filterDate) {
-                        noSearchResultsMessage.classList.remove('hidden');
-                    } else {
-                        noNotesMessage.classList.remove('hidden');
-                    }
-                    return;
-                }
-
-                notes.forEach(note => {
-                    const noteCard = document.createElement('div');
-                    noteCard.className = 'bg-white p-4 rounded-lg shadow-md border border-gray-200 transform transition-transform duration-200 hover:scale-[1.005]';
-
-                    const noteHeader = document.createElement('div');
-                    noteHeader.className = 'cursor-pointer flex justify-between items-center';
-                    noteHeader.setAttribute('aria-expanded', 'false');
-
-                    const noteTitle = document.createElement('h3');
-                    noteTitle.className = 'text-lg font-semibold text-gray-800 flex-grow';
-                    noteTitle.textContent = note.title;
-
-                    const noteTimestamp = document.createElement('span');
-                    noteTimestamp.className = 'text-sm text-gray-500 ml-4 flex-shrink-0';
-                    // Convert Firestore Timestamp to readable date string
-                    const date = note.timestamp instanceof firebase.firestore.Timestamp
-                        ? note.timestamp.toDate()
-                        : new Date(note.timestamp); // Fallback for old data if needed
-                    noteTimestamp.textContent = date.toLocaleString();
-
-                    noteHeader.appendChild(noteTitle);
-                    noteHeader.appendChild(noteTimestamp);
-
-                    const noteDetails = document.createElement('p');
-                    noteDetails.className = 'note-details text-gray-600 mt-2 text-sm leading-relaxed';
-                    noteDetails.textContent = note.details;
-
-                    noteHeader.addEventListener('click', () => {
-                        noteDetails.classList.toggle('active');
-                        const isExpanded = noteDetails.classList.contains('active');
-                        noteHeader.setAttribute('aria-expanded', isExpanded);
-                    });
-
-                    noteCard.appendChild(noteHeader);
-                    noteCard.appendChild(noteDetails);
-                    notesContainer.appendChild(noteCard);
-                });
-            } catch (error) {
-                console.error("Error rendering notes:", error);
-                displayError("Failed to load notes: " + error.message);
-            }
-        }
-
-        /**
-         * Adds a new note to Firestore for the current user.
-         */
-        async function addNote() {
-            if (!currentUser) {
-                displayError("You must be logged in to add notes.");
-                return;
-            }
-            clearError();
-
-            const title = noteTitleInput.value.trim();
-            const details = noteDetailsTextarea.value.trim();
-
-            if (!title) {
-                displayError("Please enter a title for your note.");
-                return;
-            }
-
-            try {
-                // Add a new document with a generated ID to the user's 'notes' subcollection
-                await db.collection('journals').doc(currentUser.uid).collection('notes').add({
-                    title: title,
-                    details: details,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp for accuracy
-                });
-                noteTitleInput.value = '';
-                noteDetailsTextarea.value = '';
-                // No need to call renderNotes() here, the onSnapshot listener will handle updates
-            } catch (error) {
-                console.error("Error adding note:", error);
-                displayError("Failed to add note: " + error.message);
-            }
-        }
-
-        /**
-         * Authenticates user via email and password.
-         * @param {boolean} isSignUp - True for sign up, false for login.
-         */
-        async function authenticateUser(isSignUp) {
-            clearError();
-            const email = authEmailInput.value.trim();
-            const password = authPasswordInput.value.trim();
-
-            if (!email || !password) {
-                displayError("Please enter both email and password.");
-                return;
-            }
-
-            try {
-                if (isSignUp) {
-                    await auth.createUserWithEmailAndPassword(email, password);
-                    // alert("Account created successfully! You are now logged in."); // Replaced with custom error display
-                } else {
-                    await auth.signInWithEmailAndPassword(email, password);
-                    // alert("Logged in successfully!"); // Replaced with custom error display
-                }
-                // Auth state listener will handle UI update and success message
-            } catch (error) {
-                console.error("Authentication error:", error);
-                // Firebase error codes can be handled for more specific messages
-                let errorMessage = "Authentication failed.";
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        errorMessage = 'The email address is already in use by another account.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage = 'The email address is not valid.';
-                        break;
-                    case 'auth/operation-not-allowed':
-                        errorMessage = 'Email/password accounts are not enabled. (Check Firebase Console settings)';
-                        break;
-                    case 'auth/weak-password':
-                        errorMessage = 'The password is too weak (min 6 characters).';
-                        break;
-                    case 'auth/user-not-found':
-                    case 'auth/wrong-password':
-                        errorMessage = 'Invalid email or password.';
-                        break;
-                    default:
-                        errorMessage = error.message;
-                }
-                displayError(errorMessage);
-            }
-        }
-
-        /**
-         * Logs out the current user.
-         */
-        async function logoutUser() {
-            clearError();
-            try {
-                await auth.signOut();
-                // alert("Logged out successfully!"); // Replaced with custom error display
-                // Auth state listener will handle UI update
-            } catch (error) {
-                console.error("Logout error:", error);
-                displayError("Failed to log out: " + error.message);
-            }
-        }
-
-        /**
-         * Filters notes based on the selected date in the search input.
-         */
-        function filterNotesByDate() {
-            const selectedDate = searchDateInput.value; // YYYY-MM-DD format
-            renderNotes(selectedDate);
-        }
-
-        /**
-         * Clears the search input and re-renders all notes.
-         */
-        function clearSearch() {
-            searchDateInput.value = '';
-            renderNotes();
-        }
-
-        // --- Event Listeners ---
-        loginBtn.addEventListener('click', () => authenticateUser(false));
-        signupBtn.addEventListener('click', () => authenticateUser(true));
-        logoutBtn.addEventListener('click', logoutUser);
-        addNoteBtn.addEventListener('click', addNote);
-        searchDateInput.addEventListener('change', filterNotesByDate);
-        clearSearchBtn.addEventListener('click', clearSearch);
-
-        // --- Firebase Auth State Listener ---
-        // This listener automatically fires whenever the user's login status changes
-        // It's crucial for managing UI state based on authentication status.
-        auth.onAuthStateChanged(user => {
-            currentUser = user; // Update the global currentUser variable
-            clearError(); // Clear any previous errors
-
-            if (user) {
-                // User is signed in.
-                userEmailSpan.textContent = user.email;
-                authSection.classList.add('hidden');
-                journalSection.classList.remove('hidden');
-
-                // Set up real-time listener for notes for the logged-in user
-                // This listener will automatically update the UI whenever notes change in Firestore
-                // It's important to set this up *after* currentUser is established.
-                db.collection('journals').doc(currentUser.uid).collection('notes')
-                    .orderBy('timestamp', 'desc')
-                    .onSnapshot(snapshot => {
-                        // This callback fires initially and on every subsequent change
-                        // We re-call renderNotes to handle the full UI update based on the current search filter
-                        renderNotes(searchDateInput.value || null);
-                    }, error => {
-                        console.error("Error getting real-time notes:", error);
-                        displayError("Real-time notes update failed: " + error.message);
-                    });
-            } else {
-                // User is signed out.
-                userEmailSpan.textContent = '';
-                authSection.classList.remove('hidden');
-                journalSection.classList.add('hidden');
-                notesContainer.innerHTML = ''; // Clear notes when logged out
-            }
-        });
-    </script>
-</body>
+    <script src="scripts.js"></script>
+  </body>
 </html>
